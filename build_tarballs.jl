@@ -15,13 +15,20 @@ sources = [
 # Bash recipe for building across all platforms
 script = raw"""
 cd $WORKSPACE/srcdir
-cd $WORKSPACE/srcdir
 cd ThirdParty-Mumps-releases-1.6.0/
 ./get.Mumps 
 update_configure_scripts
+# temporary fix
+for path in ${LD_LIBRARY_PATH//:/ }; do
+    for file in $(ls $path/*.la); do
+        echo "$file"
+        baddir=$(sed -n "s|libdir=||p" $file)
+        sed -i~ -e "s|$baddir|'$path'|g" $file
+    done
+done
 mkdir build
 cd build/
-../configure --prefix=$prefix --with-pic --disable-pkg-config --with-blas="$prefix/lib/libcoinblas.a -lgfortran" --host=${target} --enable-shared --enable-static --enable-dependency-linking lt_cv_deplibs_check_method=pass_all --with-metis-lib="-L${prefix}/lib -lcoinmetis" --with-metis-incdir="$prefix/include/coin/ThirdParty" 
+../configure --prefix=$prefix --with-pic --disable-pkg-config --with-blas="-L$prefix/lib -lcoinblas" --host=${target} --enable-shared --disable-static --enable-dependency-linking lt_cv_deplibs_check_method=pass_all --with-metis-lib="-L${prefix}/lib -lcoinmetis" --with-metis-incdir="$prefix/include/coin/ThirdParty"
 make -j${nproc}
 make install
 
@@ -43,6 +50,7 @@ platforms = [
     Windows(:i686),
     Windows(:x86_64)
 ]
+platforms = expand_gcc_versions(platforms)
 
 # The products that we will ensure are always built
 products(prefix) = [
@@ -51,10 +59,6 @@ products(prefix) = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    "https://github.com/juan-pablo-vielma/COINMetisBuilder/releases/download/v1.3.5/build_COINMetisBuilder.v1.3.5.jl",
-    "https://github.com/juan-pablo-vielma/COINBLASBuilder/releases/download/v1.4.6/build_COINBLASBuilder.v1.4.6.jl"
+        "https://github.com/JuliaOpt/COINBLASBuilder/releases/download/v1.4.6-1/build_COINBLASBuilder.v1.4.6.jl",
+        "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-2/build_COINMetisBuilder.v1.3.5.jl"
 ]
-
-# Build the tarballs, and possibly a `build.jl` as well.
-build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies)
-
