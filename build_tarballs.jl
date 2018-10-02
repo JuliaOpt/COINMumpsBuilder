@@ -28,24 +28,25 @@ for path in ${LD_LIBRARY_PATH//:/ }; do
 done
 mkdir build
 cd build/
-../configure --prefix=$prefix --with-pic --disable-pkg-config --with-blas="-L$prefix/lib -lcoinblas" --host=${target} --enable-shared --disable-static --enable-dependency-linking lt_cv_deplibs_check_method=pass_all --with-metis-lib="-L${prefix}/lib -lcoinmetis" --with-metis-incdir="$prefix/include/coin/ThirdParty"
+../configure --prefix=$prefix --with-pic --disable-pkg-config --host=${target} --enable-shared --disable-static --enable-dependency-linking lt_cv_deplibs_check_method=pass_all \
+--with-metis-lib="-L${prefix}/lib -lcoinmetis" --with-metis-incdir="$prefix/include/coin/ThirdParty" \
+--with-blas-lib="-L$prefix/lib -lcoinblas" 
 make -j${nproc}
 make install
-
 """
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
-    Linux(:i686, :glibc),
-    Linux(:x86_64, :glibc),
-    Linux(:aarch64, :glibc),
-    Linux(:armv7l, :glibc, :eabihf),
-    Linux(:powerpc64le, :glibc),
-    Linux(:i686, :musl),
-    Linux(:x86_64, :musl),
-    Linux(:aarch64, :musl),
-    Linux(:armv7l, :musl, :eabihf),
+    Linux(:i686, libc=:glibc),
+    Linux(:x86_64, libc=:glibc),
+    Linux(:aarch64, libc=:glibc),
+    Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
+    Linux(:powerpc64le, libc=:glibc),
+    Linux(:i686, libc=:musl),
+    Linux(:x86_64, libc=:musl),
+    Linux(:aarch64, libc=:musl),
+    Linux(:armv7l, libc=:musl, call_abi=:eabihf),
     MacOS(:x86_64),
     Windows(:i686),
     Windows(:x86_64)
@@ -62,3 +63,5 @@ dependencies = [
         "https://github.com/JuliaOpt/COINBLASBuilder/releases/download/v1.4.6-1/build_COINBLASBuilder.v1.4.6.jl",
         "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-2/build_COINMetisBuilder.v1.3.5.jl"
 ]
+
+build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies)
