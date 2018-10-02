@@ -61,7 +61,7 @@ products(prefix) = [
 # Dependencies that must be installed before this package can be built
 dependencies = [
         "https://github.com/JuliaOpt/COINBLASBuilder/releases/download/v1.4.6-1/build_COINBLASBuilder.v1.4.6.jl",
-        "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-2/build_COINMetisBuilder.v1.3.5.jl"
+        "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-1/build_COINMetisBuilder.v1.3.5.jl"
 ]
 
 build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies)
