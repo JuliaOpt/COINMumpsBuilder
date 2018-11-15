@@ -16,7 +16,7 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir
 cd ThirdParty-Mumps-releases-1.6.0/
-./get.Mumps 
+./get.Mumps
 update_configure_scripts
 # temporary fix
 for path in ${LD_LIBRARY_PATH//:/ }; do
@@ -30,7 +30,7 @@ mkdir build
 cd build/
 ../configure --prefix=$prefix --with-pic --disable-pkg-config --host=${target} --enable-shared --disable-static --enable-dependency-linking lt_cv_deplibs_check_method=pass_all \
 --with-metis-lib="-L${prefix}/lib -lcoinmetis" --with-metis-incdir="$prefix/include/coin/ThirdParty" \
---with-blas-lib="-L$prefix/lib -lcoinblas" 
+--with-blas-lib="-L$prefix/lib -lcoinblas"
 make -j${nproc}
 make install
 """
@@ -52,6 +52,8 @@ platforms = [
     Windows(:x86_64)
 ]
 platforms = expand_gcc_versions(platforms)
+# To fix gcc4 bug in Windows
+push!(platforms, Windows(:x86_64,compiler_abi=CompilerABI(:gcc6)))
 
 # The products that we will ensure are always built
 products(prefix) = [
