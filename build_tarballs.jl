@@ -53,6 +53,7 @@ platforms = [
 ]
 platforms = expand_gcc_versions(platforms)
 # To fix gcc4 bug in Windows
+push!(platforms, Windows(:i686,compiler_abi=CompilerABI(:gcc6)))
 push!(platforms, Windows(:x86_64,compiler_abi=CompilerABI(:gcc6)))
 
 # The products that we will ensure are always built
