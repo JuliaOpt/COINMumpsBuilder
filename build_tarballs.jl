@@ -9,7 +9,7 @@ version = v"1.6.0"
 sources = [
     "https://github.com/coin-or-tools/ThirdParty-Mumps/archive/releases/1.6.0.tar.gz" =>
     "3f2bb7d13333e85a29cd2dadc78a38bbf469bc3920c4c0933a90b7d8b8dc798a",
-
+    "./bundled"
 ]
 
 # Bash recipe for building across all platforms
@@ -17,6 +17,7 @@ script = raw"""
 cd $WORKSPACE/srcdir
 cd ThirdParty-Mumps-releases-1.6.0/
 ./get.Mumps
+patch -p1 < $WORKSPACE/srcdir/patches/quiet.diff
 update_configure_scripts
 # temporary fix
 for path in ${LD_LIBRARY_PATH//:/ }; do
